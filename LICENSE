@@ -1,4 +1,3 @@
-/*
 Copyright (c) 2013, Gil Brechbuhler
 All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -23,37 +22,3 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-#ifndef JULIASET_HPP
-#define JULIASET_HPP
-
-#include <complex>
-
-class JuliaSet
-{
-public:
-	JuliaSet();
-	void increaseZoom();
-	void decreaseZoom();
-	void goRight();
-	void goDown();
-	void goLeft();
-	void goUp();
-	void moreIterations();
-	void lessIterations();
-	double getMoveX();
-	double getMoveY();
-	double getZoom();
-	std::complex<double> getC();
-	int getMaxIterations();
-
-private:
-	double move_x;
-	double move_y;
-	double zoom;
-	std::complex<double> c;
-	int max_iterations;
-};
-
-#endif // JULIASET_HPP
