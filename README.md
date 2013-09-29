@@ -1,6 +1,9 @@
 # Julia set generator
 
-Draws a julia set with a constant c = -0.7 + 0.27015. Here are the controls :
+Draws a julia set with a constant c = -0.7 + 0.27015. The rendering is done with the SFML (version 2.1), here is the official site : http://www.sfml-dev.org/index.php.
+
+
+Here are the controls :
 
 Zoom in : z
 
