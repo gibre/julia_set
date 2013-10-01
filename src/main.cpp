@@ -29,16 +29,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <SFML/Graphics.hpp>
 #include <complex>
 #include <thread>
-#include <mutex>
 #include <iostream>
 #include "juliaset.hpp"
 
-void fillImage(sf::Sprite *sprite_array, int width, int height, JuliaSet *set);
-void handleInputs(JuliaSet *set);
+void fillImage(sf::Sprite *sprite_array, int _x, int _y, int partial_width, int partial_height, int width, int height, JuliaSet *set);
+void handleInputs(JuliaSet *set, float frameTime);
 
 using namespace std;
 
-mutex image_mutex;
 sf::Texture color;
 
 int main()
@@ -75,26 +73,31 @@ int main()
 			}
 		}
 
-		handleInputs(&set);
+		handleInputs(&set, (float)clock.restart().asMilliseconds());
 		window.clear();
 
-		thread image_filler(fillImage, sprite_array, width, height, &set);
+		thread image_filler(fillImage, sprite_array, 0, 0, width/2, height/2, width, height, &set);
+		thread image_filler1(fillImage, sprite_array, width/2, 0, width, height/2, width, height, &set);
+		thread image_filler2(fillImage, sprite_array, 0, height/2, width/2, height, width, height, &set);
+		thread image_filler3(fillImage, sprite_array, width/2, height/2, width, height, width, height, &set);
+		
 		image_filler.join();
+		image_filler1.join();
+		image_filler2.join();
+		image_filler3.join();
 
-		image_mutex.lock();
 		for (int i = 0; i < width*height; i++)
 			window.draw(sprite_array[i]);
 		window.display();
-		image_mutex.unlock();
 
-		std::cout << 1.0f/clock.restart().asSeconds() << std::endl;
+		//std::cout << 1.0f/clock.restart().asSeconds() << std::endl;
 	}
 
 	delete[] sprite_array;
 	return 0;
 }
 
-void fillImage(sf::Sprite *sprite_array, int width, int height, JuliaSet *set)
+void fillImage(sf::Sprite *sprite_array, int _x, int _y, int partial_width, int partial_height, int width, int height, JuliaSet *set)
 {
 	double zoom = set->getZoom();
 	double moveX = set->getMoveX();
@@ -105,9 +108,8 @@ void fillImage(sf::Sprite *sprite_array, int width, int height, JuliaSet *set)
 	double newRe, newIm;
 	int i;
 
-	image_mutex.lock();
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
+	for (int x = _x; x < partial_width; x++) {
+		for (int y = _y; y < partial_height; y++) {
 			newRe = 1.5 * (x - (width / 2)) / (0.5 * zoom * width) + moveX;
 			newIm = (y - height / 2) / (0.5 * zoom * height) + moveY;
 			newZ = complex<double> (newRe, newIm);
@@ -130,23 +132,22 @@ void fillImage(sf::Sprite *sprite_array, int width, int height, JuliaSet *set)
 			sprite_array[x + y*width].setPosition(x, y);
 		}
 	}
-	image_mutex.unlock();
 }
 
-void handleInputs(JuliaSet *set)
+void handleInputs(JuliaSet *set, float frameTime)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		set->goLeft();
+		set->goLeft(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		set->goRight();
+		set->goRight(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		set->goDown();
+		set->goDown(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		set->goUp();
+		set->goUp(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-		set->increaseZoom();
+		set->increaseZoom(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		set->decreaseZoom();
+		set->decreaseZoom(frameTime);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
 		set->moreIterations();
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))

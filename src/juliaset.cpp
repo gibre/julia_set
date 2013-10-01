@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "juliaset.hpp"
+#include <cmath>
 
 JuliaSet::JuliaSet()
 {
@@ -37,34 +38,34 @@ JuliaSet::JuliaSet()
 	max_iterations = 60;
 }
 
-void JuliaSet::increaseZoom()
+void JuliaSet::increaseZoom(float frameTime)
 {
-	zoom *= 2;
+	zoom *= pow(1.001, frameTime);
 }
 
-void JuliaSet::decreaseZoom()
+void JuliaSet::decreaseZoom(float frameTime)
 {
-	zoom /= 2;
+	zoom /= pow(1.001, frameTime);
 }
 
-void JuliaSet::goRight()
+void JuliaSet::goRight(float frameTime)
 {
-	move_x += 0.9 / zoom;
+	move_x += 0.0003 * frameTime / zoom;
 }
 
-void JuliaSet::goDown()
+void JuliaSet::goDown(float frameTime)
 {
-	move_y += 0.9 / zoom;
+	move_y += 0.0003 * frameTime / zoom;
 }
 
-void JuliaSet::goLeft()
+void JuliaSet::goLeft(float frameTime)
 {
-	move_x -= 0.9 / zoom;
+	move_x -= 0.0003 * frameTime / zoom;
 }
 
-void JuliaSet::goUp()
+void JuliaSet::goUp(float frameTime)
 {
-	move_y -= 0.9 / zoom;
+	move_y -= 0.0003 * frameTime / zoom;
 }
 
 void JuliaSet::moreIterations()

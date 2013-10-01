@@ -34,12 +34,12 @@ class JuliaSet
 {
 public:
 	JuliaSet();
-	void increaseZoom();
-	void decreaseZoom();
-	void goRight();
-	void goDown();
-	void goLeft();
-	void goUp();
+	void increaseZoom(float frameTime);
+	void decreaseZoom(float frameTime);
+	void goRight(float frameTime);
+	void goDown(float frameTime);
+	void goLeft(float frameTime);
+	void goUp(float frameTime);
 	void moreIterations();
 	void lessIterations();
 	double getMoveX();
